@@ -34,5 +34,10 @@ export default function LiveClock({
     reference_instant: referenceInstant,
   });
 
-  return <p>{temporalState.local_datetime}</p>;
+ return (
+  <div>
+    <p>{temporalState.local_datetime}</p>
+    <p>{temporalState.utc_offset}</p>
+  </div>
+);
 }

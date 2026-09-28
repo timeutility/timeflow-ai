@@ -1,4 +1,4 @@
-type EvaluateTemporalStateInput = {
+  type EvaluateTemporalStateInput = {
   entity_id: string;
   iana_identifier: string;
   reference_instant: Date;
@@ -20,10 +20,20 @@ export function evaluateTemporalState({
     hourCycle: "h23",
   });
 
+  const offsetFormatter = new Intl.DateTimeFormat("en-AU", {
+    timeZone: iana_identifier,
+    timeZoneName: "longOffset",
+  });
+
+  const offsetPart = offsetFormatter
+    .formatToParts(reference_instant)
+    .find((part) => part.type === "timeZoneName");
+
   return {
     entity_id,
     reference_instant: reference_instant.toISOString(),
     local_datetime: formatter.format(reference_instant),
     timezone: iana_identifier,
+    utc_offset: offsetPart?.value ?? null,
   };
 }
