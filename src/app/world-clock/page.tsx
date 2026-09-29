@@ -4,6 +4,8 @@ import {
   americaNewYorkTimezone,
 } from "@/data/timezones";
 import LiveClock from "./LiveClock";
+import TimeComparison from "./TimeComparison";
+
 export default function WorldClockPage() {
   return (
     <main>
@@ -20,6 +22,12 @@ export default function WorldClockPage() {
       <LiveClock
         entityId={newYork.entity_id}
         ianaIdentifier={americaNewYorkTimezone.iana_identifier}
+      />
+       <TimeComparison
+        firstName={melbourne.canonical_name}
+        firstIanaIdentifier={australiaMelbourneTimezone.iana_identifier}
+        secondName={newYork.canonical_name}
+        secondIanaIdentifier={americaNewYorkTimezone.iana_identifier}
       />
     </main>
   );
