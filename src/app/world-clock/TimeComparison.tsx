@@ -38,11 +38,29 @@ export default function TimeComparison({
     reference_instant: referenceInstant,
   });
 
-  const differenceHours = comparison.difference_minutes / 60;
+ const differenceMinutes = comparison.difference_minutes;
+  const absoluteDifferenceMinutes = Math.abs(differenceMinutes);
+  const hours = Math.floor(absoluteDifferenceMinutes / 60);
+  const minutes = absoluteDifferenceMinutes % 60;
 
+  const differenceLabel =
+    hours > 0 && minutes > 0
+      ? `${hours} hours ${minutes} minutes`
+      : hours > 0
+        ? `${hours} hours`
+        : `${minutes} minutes`;
+  if (differenceMinutes === 0) {
+    return (
+      <p>
+        {firstName} and {secondName} have the same local time
+      </p>
+    );
+  }
+
+  const direction = differenceMinutes > 0 ? "ahead of" : "behind";
   return (
     <p>
-      {firstName} is {differenceHours} hours ahead of {secondName}
+      {firstName} is {differenceLabel} {direction} {secondName}
     </p>
   );
 }
