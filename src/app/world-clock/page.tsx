@@ -5,12 +5,15 @@ import {
 } from "@/data/timezones";
 import LiveClock from "./LiveClock";
 import TimeComparison from "./TimeComparison";
+import WorldClockExperience from "./WorldClockExperience";
 
 export default function WorldClockPage() {
   return (
     <main>
       <h1>World Clock</h1>
       <p>Time around the world</p>
+      
+      <WorldClockExperience />
 
       <h2>{melbourne.canonical_name}</h2>
       <LiveClock
