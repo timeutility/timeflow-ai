@@ -9,9 +9,15 @@ export default function WorldClockExperience() {
      const [selectedLocationId, setSelectedLocationId] = useState(
     melbourne.entity_id,
   );
+  const [addedLocationIds, setAddedLocationIds] = useState<string[]>([]);
 const selectedLocation = supportedLocations.find(
   (location) => location.entity_id === selectedLocationId,
 );
+const addSelectedLocation = () => {
+  if (!addedLocationIds.includes(selectedLocationId)) {
+    setAddedLocationIds([...addedLocationIds, selectedLocationId]);
+  }
+  };
 return (
   <div>
     <select
@@ -24,8 +30,18 @@ return (
         </option>
       ))}
     </select>
+    <button type="button" onClick={addSelectedLocation}>
+  Add Location
+</button>
 
     <p>Selected location: {selectedLocation?.canonical_name}</p>
+    {addedLocationIds.map((locationId) => {
+  const location = supportedLocations.find(
+    (supportedLocation) => supportedLocation.entity_id === locationId,
+  );
+
+  return <p key={locationId}>Added: {location?.canonical_name}</p>;
+})}
   </div>
 );
 }
