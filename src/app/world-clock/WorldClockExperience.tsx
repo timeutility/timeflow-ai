@@ -4,13 +4,17 @@ import { useState } from "react";
 import { melbourne, newYork } from "@/data/locations";
 import { supportedTimezones } from "@/data/timezones";
 import LiveClock from "./LiveClock";
+import TimeComparison from "./TimeComparison";
 const supportedLocations = [melbourne, newYork];
 
 export default function WorldClockExperience() {
-     const [selectedLocationId, setSelectedLocationId] = useState(
+const [selectedLocationId, setSelectedLocationId] = useState(
     melbourne.entity_id,
   );
-  const [addedLocationIds, setAddedLocationIds] = useState<string[]>([]);
+const [addedLocationIds, setAddedLocationIds] = useState<string[]>([]);
+const addedLocations = supportedLocations.filter((location) =>
+  addedLocationIds.includes(location.entity_id),
+);
 const selectedLocation = supportedLocations.find(
   (location) => location.entity_id === selectedLocationId,
 );
@@ -59,6 +63,24 @@ return (
   </div>
 );
 })}
+     {addedLocations.length === 2 && (
+        <TimeComparison
+          firstName={addedLocations[0].canonical_name}
+          firstIanaIdentifier={
+            supportedTimezones.find(
+              (timezone) =>
+                timezone.entity_id === addedLocations[0].timezone_entity_id,
+            )!.iana_identifier
+          }
+          secondName={addedLocations[1].canonical_name}
+          secondIanaIdentifier={
+            supportedTimezones.find(
+              (timezone) =>
+                timezone.entity_id === addedLocations[1].timezone_entity_id,
+            )!.iana_identifier
+          }
+        />
+      )}
 </div>
 );
 }
