@@ -22,7 +22,12 @@ const addSelectedLocation = () => {
   if (!addedLocationIds.includes(selectedLocationId)) {
     setAddedLocationIds([...addedLocationIds, selectedLocationId]);
   }
-  };
+};
+const removeLocation = (locationId: string) => {
+  setAddedLocationIds(
+    addedLocationIds.filter((addedLocationId) => addedLocationId !== locationId),
+  );
+};
 return (
   <div>
     <select
@@ -60,6 +65,9 @@ return (
       entityId={location.entity_id}
       ianaIdentifier={timezone.iana_identifier}
     />
+    <button type="button" onClick={() => removeLocation(location.entity_id)}>
+  Remove Location
+</button>
   </div>
 );
 })}
