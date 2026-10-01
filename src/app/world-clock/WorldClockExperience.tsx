@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { melbourne, newYork } from "@/data/locations";
-
+import { supportedTimezones } from "@/data/timezones";
+import LiveClock from "./LiveClock";
 const supportedLocations = [melbourne, newYork];
 
 export default function WorldClockExperience() {
@@ -40,8 +41,24 @@ return (
     (supportedLocation) => supportedLocation.entity_id === locationId,
   );
 
-  return <p key={locationId}>Added: {location?.canonical_name}</p>;
-})}
+  const timezone = supportedTimezones.find(
+  (supportedTimezone) =>
+    supportedTimezone.entity_id === location?.timezone_entity_id,
+);
+
+  if (!location || !timezone) {
+  return null;
+}
+return (
+  <div key={locationId}>
+    <h2>{location.canonical_name}</h2>
+    <LiveClock
+      entityId={location.entity_id}
+      ianaIdentifier={timezone.iana_identifier}
+    />
   </div>
+);
+})}
+</div>
 );
 }

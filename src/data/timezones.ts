@@ -15,3 +15,8 @@ export const americaNewYorkTimezone = {
   aliases: [],
   status: "active",
 };
+
+export const supportedTimezones = [
+  australiaMelbourneTimezone,
+  americaNewYorkTimezone,
+];
