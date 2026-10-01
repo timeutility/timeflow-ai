@@ -3,7 +3,7 @@ import {
   australiaMelbourneTimezone,
   americaNewYorkTimezone,
 } from "@/data/timezones";
-import LiveClock from "./LiveClock";
+
 import TimeComparison from "./TimeComparison";
 import WorldClockExperience from "./WorldClockExperience";
 
@@ -12,20 +12,9 @@ export default function WorldClockPage() {
     <main>
       <h1>World Clock</h1>
       <p>Time around the world</p>
-      
+
       <WorldClockExperience />
 
-      <h2>{melbourne.canonical_name}</h2>
-      <LiveClock
-        entityId={melbourne.entity_id}
-        ianaIdentifier={australiaMelbourneTimezone.iana_identifier}
-      />
-
-      <h2>{newYork.canonical_name}</h2>
-      <LiveClock
-        entityId={newYork.entity_id}
-        ianaIdentifier={americaNewYorkTimezone.iana_identifier}
-      />
        <TimeComparison
         firstName={melbourne.canonical_name}
         firstIanaIdentifier={australiaMelbourneTimezone.iana_identifier}
