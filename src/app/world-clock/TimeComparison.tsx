@@ -38,7 +38,7 @@ export default function TimeComparison({
     reference_instant: referenceInstant,
   });
 
- const differenceMinutes = comparison.difference_minutes;
+  const differenceMinutes = comparison.difference_minutes;
   const absoluteDifferenceMinutes = Math.abs(differenceMinutes);
   const hours = Math.floor(absoluteDifferenceMinutes / 60);
   const minutes = absoluteDifferenceMinutes % 60;
