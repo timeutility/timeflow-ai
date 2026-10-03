@@ -8,7 +8,6 @@ export default function WorldClockPage() {
       <p>Time around the world</p>
 
       <WorldClockExperience />
-
     </main>
   );
 }
