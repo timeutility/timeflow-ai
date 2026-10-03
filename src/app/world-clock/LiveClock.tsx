@@ -37,6 +37,7 @@ export default function LiveClock({
  return (
   <div>
     <p>{temporalState.local_datetime}</p>
+    <p>{temporalState.timezone}</p>
     <p>{temporalState.utc_offset}</p>
   </div>
 );
