@@ -13,6 +13,7 @@ export default function TimeZoneConverterExperience() {
     const [destinationLocationId, setDestinationLocationId] = useState(newYork.entity_id);
     const [localDate, setLocalDate] = useState("");
     const [localTime, setLocalTime] = useState("");
+    const [conversionResult, setConversionResult] = useState<string | null>(null);
     const sourceLocation =
         sourceLocationId === melbourne.entity_id ? melbourne : newYork;
     const destinationLocation =
@@ -44,7 +45,9 @@ export default function TimeZoneConverterExperience() {
             iana_identifier: destinationTimezone.iana_identifier,
             reference_instant: resolution.reference_instant,
         });
-        console.log(destinationState);
+        setConversionResult(
+            `${destinationLocation.canonical_name}: ${destinationState.local_datetime} (${destinationState.utc_offset})`,
+        );
     }
     return (
         <section>
@@ -95,6 +98,8 @@ export default function TimeZoneConverterExperience() {
             <button type="button" onClick={handleConvert}>
                 Convert
             </button>
+
+            {conversionResult && <p>{conversionResult}</p>}
         </section>
     );
 }
