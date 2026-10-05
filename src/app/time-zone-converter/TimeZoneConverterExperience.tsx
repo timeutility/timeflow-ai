@@ -2,11 +2,35 @@
 
 import { useState } from "react";
 import { melbourne, newYork } from "@/data/locations";
+import {
+    americaNewYorkTimezone,
+    australiaMelbourneTimezone,
+} from "@/data/timezones";
+import { resolveLocalDateTime } from "@/lib/temporal/resolveLocalDateTime";
 export default function TimeZoneConverterExperience() {
     const [sourceLocationId, setSourceLocationId] = useState(melbourne.entity_id);
     const [destinationLocationId, setDestinationLocationId] = useState(newYork.entity_id);
     const [localDate, setLocalDate] = useState("");
     const [localTime, setLocalTime] = useState("");
+    const sourceLocation =
+        sourceLocationId === melbourne.entity_id ? melbourne : newYork;
+    const sourceTimezone =
+        sourceLocation.timezone_entity_id === australiaMelbourneTimezone.entity_id
+            ? australiaMelbourneTimezone
+            : americaNewYorkTimezone;
+    function handleConvert() {
+        if (!localDate || !localTime) {
+            return;
+        }
+
+        const resolution = resolveLocalDateTime({
+            local_date: localDate,
+            local_time: localTime,
+            iana_identifier: sourceTimezone.iana_identifier,
+        });
+
+        console.log(resolution);
+    }
     return (
         <section>
             <div>
@@ -15,7 +39,7 @@ export default function TimeZoneConverterExperience() {
                     id="source-location"
                     value={sourceLocationId}
                     onChange={(event) => setSourceLocationId(event.target.value)}
-                 >
+                >
                     <option value={melbourne.entity_id}>{melbourne.canonical_name}</option>
                     <option value={newYork.entity_id}>{newYork.canonical_name}</option>
                 </select>
@@ -24,20 +48,20 @@ export default function TimeZoneConverterExperience() {
             <div>
                 <label htmlFor="local-date">Date</label>
                 <input
-                   id="local-date"
-                   type="date"
-                   value={localDate}
-                   onChange={(event) => setLocalDate(event.target.value)}
+                    id="local-date"
+                    type="date"
+                    value={localDate}
+                    onChange={(event) => setLocalDate(event.target.value)}
                 />
             </div>
 
             <div>
                 <label htmlFor="local-time">Time</label>
                 <input
-                   id="local-time"
-                   type="time"
-                   value={localTime}
-                   onChange={(event) => setLocalTime(event.target.value)}
+                    id="local-time"
+                    type="time"
+                    value={localTime}
+                    onChange={(event) => setLocalTime(event.target.value)}
                 />
             </div>
 
@@ -53,7 +77,9 @@ export default function TimeZoneConverterExperience() {
                 </select>
             </div>
 
-            <button type="button">Convert</button>
+            <button type="button" onClick={handleConvert}>
+               Convert
+            </button>
         </section>
     );
 }

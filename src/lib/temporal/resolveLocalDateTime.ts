@@ -42,12 +42,13 @@ export function resolveLocalDateTime({
     return { status: "nonexistent" };
   }
 
-  const earlierPlainDateTime = earlier.toPlainDateTime().toString();
-  const laterPlainDateTime = later.toPlainDateTime().toString();
+  const requestedPlainDateTime = Temporal.PlainDateTime.from(localDateTime);
+  const earlierPlainDateTime = earlier.toPlainDateTime();
+  const laterPlainDateTime = later.toPlainDateTime();
 
   if (
-    earlierPlainDateTime !== localDateTime ||
-    laterPlainDateTime !== localDateTime
+    !earlierPlainDateTime.equals(requestedPlainDateTime) ||
+    !laterPlainDateTime.equals(requestedPlainDateTime)
   ) {
     return { status: "nonexistent" };
   }
