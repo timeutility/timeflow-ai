@@ -7,6 +7,7 @@ import {
     australiaMelbourneTimezone,
 } from "@/data/timezones";
 import { resolveLocalDateTime } from "@/lib/temporal/resolveLocalDateTime";
+import { evaluateTemporalState } from "@/lib/temporal/evaluateTemporalState";
 export default function TimeZoneConverterExperience() {
     const [sourceLocationId, setSourceLocationId] = useState(melbourne.entity_id);
     const [destinationLocationId, setDestinationLocationId] = useState(newYork.entity_id);
@@ -14,8 +15,14 @@ export default function TimeZoneConverterExperience() {
     const [localTime, setLocalTime] = useState("");
     const sourceLocation =
         sourceLocationId === melbourne.entity_id ? melbourne : newYork;
+    const destinationLocation =
+        destinationLocationId === melbourne.entity_id ? melbourne : newYork;
     const sourceTimezone =
         sourceLocation.timezone_entity_id === australiaMelbourneTimezone.entity_id
+            ? australiaMelbourneTimezone
+            : americaNewYorkTimezone;
+    const destinationTimezone =
+        destinationLocation.timezone_entity_id === australiaMelbourneTimezone.entity_id
             ? australiaMelbourneTimezone
             : americaNewYorkTimezone;
     function handleConvert() {
@@ -28,8 +35,16 @@ export default function TimeZoneConverterExperience() {
             local_time: localTime,
             iana_identifier: sourceTimezone.iana_identifier,
         });
-
-        console.log(resolution);
+        if (resolution.status !== "unique") {
+            console.log(resolution);
+            return;
+        }
+        const destinationState = evaluateTemporalState({
+            entity_id: destinationLocation.entity_id,
+            iana_identifier: destinationTimezone.iana_identifier,
+            reference_instant: resolution.reference_instant,
+        });
+        console.log(destinationState);
     }
     return (
         <section>
@@ -78,7 +93,7 @@ export default function TimeZoneConverterExperience() {
             </div>
 
             <button type="button" onClick={handleConvert}>
-               Convert
+                Convert
             </button>
         </section>
     );
