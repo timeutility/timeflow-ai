@@ -28,6 +28,7 @@ export default function TimeZoneConverterExperience() {
             : americaNewYorkTimezone;
     function handleConvert() {
         if (!localDate || !localTime) {
+            setConversionResult("Please enter both a date and a time.");
             return;
         }
 
