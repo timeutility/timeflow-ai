@@ -36,15 +36,26 @@ export default function TimeZoneConverterExperience() {
             local_time: localTime,
             iana_identifier: sourceTimezone.iana_identifier,
         });
-        if (resolution.status !== "unique") {
-            console.log(resolution);
+        if (resolution.status === "ambiguous") {
+            setConversionResult(
+                "This local time occurs twice because of a daylight-saving time transition.",
+            );
             return;
         }
+
+        if (resolution.status === "nonexistent") {
+            setConversionResult(
+                "This local time does not exist because of a daylight-saving time transition.",
+            );
+            return;
+        }
+
         const destinationState = evaluateTemporalState({
             entity_id: destinationLocation.entity_id,
             iana_identifier: destinationTimezone.iana_identifier,
             reference_instant: resolution.reference_instant,
         });
+
         setConversionResult(
             `${destinationLocation.canonical_name}: ${destinationState.local_datetime} (${destinationState.utc_offset})`,
         );
