@@ -49,7 +49,11 @@ export default function TimeZoneConverterExperience() {
             );
             return;
         }
-
+        const sourceState = evaluateTemporalState({
+            entity_id: sourceLocation.entity_id,
+            iana_identifier: sourceTimezone.iana_identifier,
+            reference_instant: resolution.reference_instant,
+        });
         const destinationState = evaluateTemporalState({
             entity_id: destinationLocation.entity_id,
             iana_identifier: destinationTimezone.iana_identifier,
@@ -57,7 +61,7 @@ export default function TimeZoneConverterExperience() {
         });
 
         setConversionResult(
-            `${destinationLocation.canonical_name}: ${destinationState.local_datetime} (${destinationState.utc_offset})`,
+            `${sourceLocation.canonical_name}: ${sourceState.local_datetime} (${sourceState.timezone}, ${sourceState.utc_offset}) → ${destinationLocation.canonical_name}: ${destinationState.local_datetime} (${destinationState.timezone}, ${destinationState.utc_offset})`,
         );
     }
     return (
