@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { melbourne, newYork } from "@/data/locations";
 import { supportedTimezones } from "@/data/timezones";
+import { resolveAvailabilityInterval } from "@/lib/temporal/resolveAvailabilityInterval";
+import { evaluateMeetingWindow } from "@/lib/temporal/evaluateMeetingWindow";
 
 const supportedLocations = [melbourne, newYork];
 
@@ -29,10 +31,105 @@ export default function MeetingTimePlannerExperience() {
     const [participantBDate, setParticipantBDate] = useState("");
     const [participantBStartTime, setParticipantBStartTime] = useState("");
     const [participantBEndTime, setParticipantBEndTime] = useState("");
-    const [meetingDurationMinutes, setMeetingDurationMinutes] = useState(30);
+    const [meetingDurationMinutes, setMeetingDurationMinutes] =
+        useState<30 | 60 | 90>(30);
     const participantATimezone = getTimezoneForLocation(participantALocationId);
     const participantBTimezone = getTimezoneForLocation(participantBLocationId);
+    const [meetingResultMessage, setMeetingResultMessage] = useState("");
+    function handleFindMeeting() {
+        if (
+            !participantADate ||
+            !participantAStartTime ||
+            !participantAEndTime ||
+            !participantBDate ||
+            !participantBStartTime ||
+            !participantBEndTime
+        ) {
+            setMeetingResultMessage(
+                "Please enter a date, start time, and end time for both participants."
+            );
+            return;
+        }
 
+        if (!participantATimezone) {
+            setMeetingResultMessage("Participant A's timezone is unavailable.");
+            return;
+        }
+
+        const participantAAvailability = resolveAvailabilityInterval({
+            local_date: participantADate,
+            start_time: participantAStartTime,
+            end_time: participantAEndTime,
+            iana_identifier: participantATimezone.iana_identifier,
+        });
+
+        if (participantAAvailability.status !== "valid") {
+            setMeetingResultMessage(
+                `Participant A availability error: ${participantAAvailability.status}`
+            );
+            return;
+        }
+
+        if (!participantBTimezone) {
+            setMeetingResultMessage("Participant B's timezone is unavailable.");
+            return;
+        }
+
+        const participantBAvailability = resolveAvailabilityInterval({
+            local_date: participantBDate,
+            start_time: participantBStartTime,
+            end_time: participantBEndTime,
+            iana_identifier: participantBTimezone.iana_identifier,
+        });
+        if (participantBAvailability.status !== "valid") {
+            setMeetingResultMessage(
+                `Participant B availability error: ${participantBAvailability.status}`
+            );
+            return;
+        }
+
+        const meetingWindow = evaluateMeetingWindow({
+            participant_a_start: participantAAvailability.start_instant,
+            participant_a_end: participantAAvailability.end_instant,
+            participant_b_start: participantBAvailability.start_instant,
+            participant_b_end: participantBAvailability.end_instant,
+            duration_minutes: meetingDurationMinutes,
+        });
+
+        if (meetingWindow.status === "no_overlap") {
+            setMeetingResultMessage(
+                "No meeting time is available within both participants' selected availability."
+            );
+            return;
+        }
+
+        const formatMeetingTime = (instant: Date, timezone: string) =>
+            new Intl.DateTimeFormat("en-AU", {
+                timeZone: timezone,
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+            }).format(instant);
+
+        setMeetingResultMessage(
+            `Meeting available! Melbourne: ${formatMeetingTime(
+                meetingWindow.meeting_start,
+                participantATimezone.iana_identifier
+            )} to ${formatMeetingTime(
+                meetingWindow.meeting_end,
+                participantATimezone.iana_identifier
+            )}. New York: ${formatMeetingTime(
+                meetingWindow.meeting_start,
+                participantBTimezone.iana_identifier
+            )} to ${formatMeetingTime(
+                meetingWindow.meeting_end,
+                participantBTimezone.iana_identifier
+            )}.`
+        );
+    }
     return (
         <section>
             <h2>Meeting Planner</h2>
@@ -143,13 +240,21 @@ export default function MeetingTimePlannerExperience() {
                 id="meeting-duration"
                 value={meetingDurationMinutes}
                 onChange={(event) =>
-                    setMeetingDurationMinutes(Number(event.target.value))
+                    setMeetingDurationMinutes(
+                        Number(event.target.value) as 30 | 60 | 90
+                    )
                 }
             >
                 <option value={30}>30 minutes</option>
                 <option value={60}>60 minutes</option>
                 <option value={90}>90 minutes</option>
             </select>
+            <button type="button" onClick={handleFindMeeting}>
+                Find Meeting Time
+            </button>
+            {meetingResultMessage && (
+                <p role="status">{meetingResultMessage}</p>
+            )}
         </section>
     );
 }
