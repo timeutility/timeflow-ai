@@ -33,10 +33,24 @@ export default function MeetingTimePlannerExperience() {
     const [participantBEndTime, setParticipantBEndTime] = useState("");
     const [meetingDurationMinutes, setMeetingDurationMinutes] =
         useState<30 | 60 | 90>(30);
+    const participantALocation = supportedLocations.find(
+        (location) => location.entity_id === participantALocationId
+    );
+
+    const participantBLocation = supportedLocations.find(
+        (location) => location.entity_id === participantBLocationId
+    );
     const participantATimezone = getTimezoneForLocation(participantALocationId);
     const participantBTimezone = getTimezoneForLocation(participantBLocationId);
     const [meetingResultMessage, setMeetingResultMessage] = useState("");
+    const [meetingResult, setMeetingResult] = useState<{
+        start: Date;
+        end: Date;
+    } | null>(null);
+
     function handleFindMeeting() {
+        setMeetingResult(null);
+
         if (
             !participantADate ||
             !participantAStartTime ||
@@ -103,32 +117,11 @@ export default function MeetingTimePlannerExperience() {
             return;
         }
 
-        const formatMeetingTime = (instant: Date, timezone: string) =>
-            new Intl.DateTimeFormat("en-AU", {
-                timeZone: timezone,
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-            }).format(instant);
-
-        setMeetingResultMessage(
-            `Meeting available! Melbourne: ${formatMeetingTime(
-                meetingWindow.meeting_start,
-                participantATimezone.iana_identifier
-            )} to ${formatMeetingTime(
-                meetingWindow.meeting_end,
-                participantATimezone.iana_identifier
-            )}. New York: ${formatMeetingTime(
-                meetingWindow.meeting_start,
-                participantBTimezone.iana_identifier
-            )} to ${formatMeetingTime(
-                meetingWindow.meeting_end,
-                participantBTimezone.iana_identifier
-            )}.`
-        );
+        setMeetingResult({
+            start: meetingWindow.meeting_start,
+            end: meetingWindow.meeting_end,
+        });
+        setMeetingResultMessage("Meeting available!");
     }
     return (
         <section>
@@ -253,7 +246,67 @@ export default function MeetingTimePlannerExperience() {
                 Find Meeting Time
             </button>
             {meetingResultMessage && (
-                <p role="status">{meetingResultMessage}</p>
+                <section aria-labelledby="meeting-result-heading">
+                    <h3 id="meeting-result-heading">Meeting Result</h3>
+                    <p role="status">{meetingResultMessage}</p>
+                    {meetingResult && participantATimezone && (
+                        <div>
+                            <h4>
+                                Participant A — {participantALocation?.canonical_name ?? "Unknown location"}
+                            </h4>
+                            <p>
+                                {new Intl.DateTimeFormat("en-AU", {
+                                    timeZone: participantATimezone.iana_identifier,
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                }).format(meetingResult.start)}
+                                {" to "}
+                                {new Intl.DateTimeFormat("en-AU", {
+                                    timeZone: participantATimezone.iana_identifier,
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                }).format(meetingResult.end)}
+                            </p>
+                        </div>
+                    )}
+                    {meetingResult && participantBTimezone && (
+
+                        <div>
+                            <h4>
+                                Participant B — {participantBLocation?.canonical_name ?? "Unknown location"}
+                            </h4>
+                            <p>
+                                {new Intl.DateTimeFormat("en-AU", {
+                                    timeZone: participantBTimezone.iana_identifier,
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                }).format(meetingResult.start)}
+                                {" to "}
+                                {new Intl.DateTimeFormat("en-AU", {
+                                    timeZone: participantBTimezone.iana_identifier,
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                }).format(meetingResult.end)}
+                            </p>
+                        </div>
+                    )}
+                </section>
             )}
         </section>
     );
