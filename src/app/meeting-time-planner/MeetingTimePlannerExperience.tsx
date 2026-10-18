@@ -152,7 +152,7 @@ export default function MeetingTimePlannerExperience() {
 
         if (meetingWindow.status === "no_overlap") {
             setMeetingResultMessage(
-                "No meeting time is available within both participants' selected availability."
+                "No suitable meeting time was found. The participants' availability periods do not provide enough overlapping time for the selected meeting duration. Try adjusting one or both participants' availability times, dates, or the meeting duration."
             );
             return;
         }
