@@ -47,20 +47,26 @@ export default function MeetingTimePlannerExperience() {
         start: Date;
         end: Date;
     } | null>(null);
-
     function handleFindMeeting() {
         setMeetingResult(null);
-
         if (
             !participantADate ||
             !participantAStartTime ||
-            !participantAEndTime ||
+            !participantAEndTime
+        ) {
+            setMeetingResultMessage(
+                "Please enter a date, availability start time, and availability end time for Participant A."
+            );
+            return;
+        }
+
+        if (
             !participantBDate ||
             !participantBStartTime ||
             !participantBEndTime
         ) {
             setMeetingResultMessage(
-                "Please enter a date, start time, and end time for both participants."
+                "Please enter a date, availability start time, and availability end time for Participant B."
             );
             return;
         }
@@ -78,9 +84,27 @@ export default function MeetingTimePlannerExperience() {
         });
 
         if (participantAAvailability.status !== "valid") {
-            setMeetingResultMessage(
-                `Participant A availability error: ${participantAAvailability.status}`
-            );
+            if (participantAAvailability.status === "invalid_order") {
+                setMeetingResultMessage(
+                    "Participant A: The availability end time must be later than the start time. Please correct your times and try again."
+                );
+                return;
+            }
+
+            if (participantAAvailability.status === "ambiguous") {
+                setMeetingResultMessage(
+                    "Participant A: One of your availability times occurs twice because daylight saving time is ending. Please choose a different time."
+                );
+                return;
+            }
+
+            if (participantAAvailability.status === "nonexistent") {
+                setMeetingResultMessage(
+                    "Participant A: One of your availability times does not exist because clocks move forward for daylight saving time. Please choose a different time."
+                );
+                return;
+            }
+
             return;
         }
 
@@ -96,12 +120,28 @@ export default function MeetingTimePlannerExperience() {
             iana_identifier: participantBTimezone.iana_identifier,
         });
         if (participantBAvailability.status !== "valid") {
-            setMeetingResultMessage(
-                `Participant B availability error: ${participantBAvailability.status}`
-            );
+            if (participantBAvailability.status === "invalid_order") {
+                setMeetingResultMessage(
+                    "Participant B: The availability end time must be later than the start time. Please correct your times and try again."
+                );
+                return;
+            }
+
+            if (participantBAvailability.status === "ambiguous") {
+                setMeetingResultMessage(
+                    "Participant B: One of your availability times occurs twice because daylight saving time is ending. Please choose a different time."
+                );
+                return;
+            }
+
+            if (participantBAvailability.status === "nonexistent") {
+                setMeetingResultMessage(
+                    "Participant B: One of your availability times does not exist because clocks move forward for daylight saving time. Please choose a different time."
+                );
+                return;
+            }
             return;
         }
-
         const meetingWindow = evaluateMeetingWindow({
             participant_a_start: participantAAvailability.start_instant,
             participant_a_end: participantAAvailability.end_instant,
