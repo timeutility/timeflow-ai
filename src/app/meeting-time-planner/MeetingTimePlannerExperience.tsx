@@ -295,25 +295,35 @@ export default function MeetingTimePlannerExperience() {
                                 Participant A — {participantALocation?.canonical_name ?? "Unknown location"}
                             </h4>
                             <p>
-                                {new Intl.DateTimeFormat("en-AU", {
-                                    timeZone: participantATimezone.iana_identifier,
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                }).format(meetingResult.start)}
-                                {" to "}
-                                {new Intl.DateTimeFormat("en-AU", {
-                                    timeZone: participantATimezone.iana_identifier,
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                }).format(meetingResult.end)}
+                                {(() => {
+                                    const timeZone = participantATimezone.iana_identifier;
+
+                                    const dateFormatter = new Intl.DateTimeFormat("en-AU", {
+                                        timeZone,
+                                        weekday: "long",
+                                        day: "numeric",
+                                        month: "long",
+                                        year: "numeric",
+                                    });
+
+                                    const timeFormatter = new Intl.DateTimeFormat("en-AU", {
+                                        timeZone,
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    });
+
+                                    const startDate = dateFormatter.format(meetingResult.start);
+                                    const endDate = dateFormatter.format(meetingResult.end);
+                                    const startTime = timeFormatter.format(meetingResult.start);
+                                    const endTime = timeFormatter.format(meetingResult.end);
+
+                                    if (startDate === endDate) {
+                                        return `${startDate} — ${startTime} to ${endTime}`;
+                                    }
+
+                                    return `${startDate} at ${startTime} to ${endDate} at ${endTime}`;
+                                })()}
                             </p>
                         </div>
                     )}
@@ -324,25 +334,35 @@ export default function MeetingTimePlannerExperience() {
                                 Participant B — {participantBLocation?.canonical_name ?? "Unknown location"}
                             </h4>
                             <p>
-                                {new Intl.DateTimeFormat("en-AU", {
-                                    timeZone: participantBTimezone.iana_identifier,
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                }).format(meetingResult.start)}
-                                {" to "}
-                                {new Intl.DateTimeFormat("en-AU", {
-                                    timeZone: participantBTimezone.iana_identifier,
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                }).format(meetingResult.end)}
+                                {(() => {
+                                    const timeZone = participantBTimezone.iana_identifier;
+
+                                    const dateFormatter = new Intl.DateTimeFormat("en-AU", {
+                                        timeZone,
+                                        weekday: "long",
+                                        day: "numeric",
+                                        month: "long",
+                                        year: "numeric",
+                                    });
+
+                                    const timeFormatter = new Intl.DateTimeFormat("en-AU", {
+                                        timeZone,
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    });
+
+                                    const startDate = dateFormatter.format(meetingResult.start);
+                                    const endDate = dateFormatter.format(meetingResult.end);
+                                    const startTime = timeFormatter.format(meetingResult.start);
+                                    const endTime = timeFormatter.format(meetingResult.end);
+
+                                    if (startDate === endDate) {
+                                        return `${startDate} — ${startTime} to ${endTime}`;
+                                    }
+
+                                    return `${startDate} at ${startTime} to ${endDate} at ${endTime}`;
+                                })()}
                             </p>
                         </div>
                     )}
