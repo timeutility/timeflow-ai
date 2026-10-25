@@ -5,6 +5,7 @@ import { melbourne, newYork } from "@/data/locations";
 import { supportedTimezones } from "@/data/timezones";
 import { resolveAvailabilityInterval } from "@/lib/temporal/resolveAvailabilityInterval";
 import { evaluateMeetingWindow } from "@/lib/temporal/evaluateMeetingWindow";
+import { formatMeetingResult } from "@/lib/temporal/formatMeetingResult";
 
 const supportedLocations = [melbourne, newYork];
 
@@ -295,35 +296,11 @@ export default function MeetingTimePlannerExperience() {
                                 Participant A — {participantALocation?.canonical_name ?? "Unknown location"}
                             </h4>
                             <p>
-                                {(() => {
-                                    const timeZone = participantATimezone.iana_identifier;
-
-                                    const dateFormatter = new Intl.DateTimeFormat("en-AU", {
-                                        timeZone,
-                                        weekday: "long",
-                                        day: "numeric",
-                                        month: "long",
-                                        year: "numeric",
-                                    });
-
-                                    const timeFormatter = new Intl.DateTimeFormat("en-AU", {
-                                        timeZone,
-                                        hour: "numeric",
-                                        minute: "2-digit",
-                                        hour12: true,
-                                    });
-
-                                    const startDate = dateFormatter.format(meetingResult.start);
-                                    const endDate = dateFormatter.format(meetingResult.end);
-                                    const startTime = timeFormatter.format(meetingResult.start);
-                                    const endTime = timeFormatter.format(meetingResult.end);
-
-                                    if (startDate === endDate) {
-                                        return `${startDate} — ${startTime} to ${endTime}`;
-                                    }
-
-                                    return `${startDate} at ${startTime} to ${endDate} at ${endTime}`;
-                                })()}
+                                {formatMeetingResult({
+                                    start: meetingResult.start,
+                                    end: meetingResult.end,
+                                    timeZone: participantATimezone.iana_identifier,
+                                })}
                             </p>
                         </div>
                     )}
@@ -334,35 +311,11 @@ export default function MeetingTimePlannerExperience() {
                                 Participant B — {participantBLocation?.canonical_name ?? "Unknown location"}
                             </h4>
                             <p>
-                                {(() => {
-                                    const timeZone = participantBTimezone.iana_identifier;
-
-                                    const dateFormatter = new Intl.DateTimeFormat("en-AU", {
-                                        timeZone,
-                                        weekday: "long",
-                                        day: "numeric",
-                                        month: "long",
-                                        year: "numeric",
-                                    });
-
-                                    const timeFormatter = new Intl.DateTimeFormat("en-AU", {
-                                        timeZone,
-                                        hour: "numeric",
-                                        minute: "2-digit",
-                                        hour12: true,
-                                    });
-
-                                    const startDate = dateFormatter.format(meetingResult.start);
-                                    const endDate = dateFormatter.format(meetingResult.end);
-                                    const startTime = timeFormatter.format(meetingResult.start);
-                                    const endTime = timeFormatter.format(meetingResult.end);
-
-                                    if (startDate === endDate) {
-                                        return `${startDate} — ${startTime} to ${endTime}`;
-                                    }
-
-                                    return `${startDate} at ${startTime} to ${endDate} at ${endTime}`;
-                                })()}
+                                {formatMeetingResult({
+                                    start: meetingResult.start,
+                                    end: meetingResult.end,
+                                    timeZone: participantBTimezone.iana_identifier,
+                                })}
                             </p>
                         </div>
                     )}
