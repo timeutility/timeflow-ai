@@ -88,4 +88,35 @@ describe("evaluateMeetingWindow", () => {
             meeting_end: new Date("2026-10-15T11:00:00Z"),
         });
     });
+    // Test 7: Availability windows touching at a boundary
+    it("rejects availability windows that only touch at a boundary", () => {
+        const result = evaluateMeetingWindow({
+            participant_a_start: new Date("2026-10-15T09:00:00Z"),
+            participant_a_end: new Date("2026-10-15T10:00:00Z"),
+            participant_b_start: new Date("2026-10-15T10:00:00Z"),
+            participant_b_end: new Date("2026-10-15T11:00:00Z"),
+            duration_minutes: 30,
+        });
+
+        expect(result).toEqual({
+            status: "no_overlap",
+        });
+    });
+    // Test 8: Identical availability windows
+    it("finds the earliest meeting when both availability windows are identical", () => {
+        const result = evaluateMeetingWindow({
+            participant_a_start: new Date("2026-10-15T09:00:00Z"),
+            participant_a_end: new Date("2026-10-15T11:00:00Z"),
+            participant_b_start: new Date("2026-10-15T09:00:00Z"),
+            participant_b_end: new Date("2026-10-15T11:00:00Z"),
+            duration_minutes: 30,
+        });
+
+        expect(result).toEqual({
+            status: "available",
+            meeting_start: new Date("2026-10-15T09:00:00Z"),
+            meeting_end: new Date("2026-10-15T09:30:00Z"),
+        });
+    });
 });
+
