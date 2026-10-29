@@ -15,8 +15,6 @@ export default function LiveClock({
   const [referenceInstant, setReferenceInstant] = useState<Date | null>(null);
 
   useEffect(() => {
-    setReferenceInstant(new Date());
-
     const timer = window.setInterval(() => {
       setReferenceInstant(new Date());
     }, 1000);
@@ -34,11 +32,11 @@ export default function LiveClock({
     reference_instant: referenceInstant,
   });
 
- return (
-  <div>
-    <p>{temporalState.local_datetime}</p>
-    <p>{temporalState.timezone}</p>
-    <p>{temporalState.utc_offset}</p>
-  </div>
-);
+  return (
+    <div>
+      <p>{temporalState.local_datetime}</p>
+      <p>{temporalState.timezone}</p>
+      <p>{temporalState.utc_offset}</p>
+    </div>
+  );
 }

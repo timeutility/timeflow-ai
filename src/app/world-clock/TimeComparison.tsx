@@ -19,8 +19,6 @@ export default function TimeComparison({
   const [referenceInstant, setReferenceInstant] = useState<Date | null>(null);
 
   useEffect(() => {
-    setReferenceInstant(new Date());
-
     const timer = window.setInterval(() => {
       setReferenceInstant(new Date());
     }, 1000);
